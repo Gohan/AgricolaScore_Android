@@ -7,5 +7,7 @@
     </string>
     <string name="hello_world" >Hello world!
     </string>
+    <string name="home_tv_usage">这是一个计算农场主算分的应用, 选取每一个玩家来输入他的得分</string>
+    <string name="home_tv_playernumber">玩家个数:</string>
 
 </resources>
