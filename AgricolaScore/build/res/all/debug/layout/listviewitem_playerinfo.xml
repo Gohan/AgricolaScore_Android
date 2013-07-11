@@ -13,13 +13,13 @@
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
 
-            android:gravity="center_vertical|start"
+            android:gravity="center_vertical"
             android:layout_alignParentTop="true"
             android:layout_alignParentBottom="true"
             android:layout_marginRight="15dp"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"
-            android:text="Player Name"/>
+            android:text="ABCD"/>
 
     <!-- Actual Item Name Data -->
     <TextView

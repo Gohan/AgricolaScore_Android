@@ -9,5 +9,7 @@
     </string>
     <string name="home_tv_usage">这是一个计算农场主算分的应用, 选取每一个玩家来输入他的得分</string>
     <string name="home_tv_playernumber">玩家个数:</string>
+    <string name="home_static_jsonstring">"{\n        \"name\":\"Player%%%%d\",\n        \"color\":\"%%%%s\",\n        \"room_type\":\"Wood\",\n        \"fields\":[\n        0,\n        -1\n        ],\n        \"pastures\":[\n        0,\n        -1\n        ],\n        \"grain\":[\n        0,\n        -1\n        ],\n        \"vegetables\":[\n        0,\n        -1\n        ],\n        \"sheep\":[\n        0,\n        -1\n        ],\n        \"boar\":[\n        0,\n        -1\n        ],\n        \"cattle\":[\n        0,\n        -1\n        ],\n        \"unused_space\":[\n        0,\n        0\n        ],\n        \"fenced_stables\":[\n        0,\n        0\n        ],\n        \"rooms\":[\n        5,\n        0\n        ],\n        \"family_members\":[\n        2,\n        6\n        ],\n        \"victory_points\":0,\n        \"bonus_points\":0,\n        \"total_score\":-1\n        }"
+    </string>
 
 </resources>
