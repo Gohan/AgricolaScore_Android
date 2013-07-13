@@ -1,52 +1,35 @@
 package apps.baozishan.agricola_score;
 
-import android.app.ActionBar;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.MeasureSpec;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
+import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.ObjectOutputStream;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Dictionary;
-import java.util.Enumeration;
 import java.util.Hashtable;
 
 import apps.baozishan.agricola_score.Utils.PlayerItem;
 
 public class HomeActivity extends Activity {
+    protected static final int OPEN_CACULATE_SCORE = 0;
+    private GameInfoData gameInfoData = new GameInfoData();
 
-    private JSONObject gameInfo = new JSONObject();
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
-        LoadPlayerInfoOnStart(savedInstanceState);
-
+    private void InitUIComponents() {
         RadioGroup rg = (RadioGroup)findViewById(R.id.home_rg_playernumber);
         rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -57,16 +40,35 @@ public class HomeActivity extends Activity {
                     String strPlayerNumber = ((RadioButton) findViewById(i)).getText().toString();
                     ShowMessageBox(strPlayerNumber);
                     int nPlayerNumber = Integer.parseInt(strPlayerNumber);
+                    gameInfoData.UpdatePlayerNumber(nPlayerNumber);
                     SetListViewByPlayerNumber(Integer.parseInt(strPlayerNumber));
-                    try {
-                        gameInfo.put("PlayerNumber", nPlayerNumber);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
                     SavePlayerInfo();
                 }
             }
         });
+
+        ListView lv = (ListView)findViewById(R.id.home_lv_players);
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            private ListView lv = null;
+            private Context context = null;
+
+            public AdapterView.OnItemClickListener init(ListView lv, Context context) {
+                this.lv = lv;
+                this.context = context;
+                return this;
+            }
+
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                // int index = lv.getPositionForView(view);
+                Intent intent = new Intent(context, CaculateScoreActivity.class);
+                intent.putExtra("index", i);
+                intent.putExtra("player_info", gameInfoData.getPlayerInfoJsonString(i));
+                startActivityForResult(intent, OPEN_CACULATE_SCORE);
+            }
+        }.init(lv, this));
+
         Dictionary<Integer, Integer> mapRadio = new Hashtable<Integer, Integer>();
         mapRadio.put(1, R.id.home_radioButton1);
         mapRadio.put(2, R.id.home_radioButton2);
@@ -74,95 +76,48 @@ public class HomeActivity extends Activity {
         mapRadio.put(4, R.id.home_radioButton4);
         mapRadio.put(5, R.id.home_radioButton5);
         int number = 0;
-        try {
-            number = gameInfo.getInt("PlayerNumber");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        number = gameInfoData.getPlayerNumber();
         RadioButton rb = (RadioButton) findViewById(mapRadio.get(number));
         if (rb != null) {
             rb.setChecked(true);
         }
+    }
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        gameInfoData.AttachContext(this);
+        gameInfoData.RebuildGameInfo();
+        gameInfoData.Save(this);
+        gameInfoData.Load();
+        setContentView(R.layout.activity_home);
+        InitUIComponents();
     }
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
-        savedInstanceState.putString("LastGameInfo", gameInfo.toString());
+        savedInstanceState.putString("LastGameInfo", gameInfoData.GetJsonString());
     }
 
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        LoadPlayerInfoOnStart(savedInstanceState);
+        gameInfoData.AttachContext(this);
+        if (savedInstanceState != null) {
+            gameInfoData.LoadFromJsonString(savedInstanceState.getString("LastGameInfo"));
+        } else {
+            gameInfoData.Load();
+        }
     }
 
     private void SavePlayerInfo() {
-        PrintStream outputStream = null;
-        try {
-            outputStream = new PrintStream(openFileOutput("Save.json", MODE_PRIVATE));
-            outputStream.print(gameInfo.toString());
-            outputStream.flush();
-            outputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        gameInfoData.Save(this);
     }
 
-    private void LoadPlayerInfoOnStart(Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            String strGameInfoJson = savedInstanceState.getString("LastGameInfo");
-            try {
-                gameInfo = new JSONObject(strGameInfoJson);
-            } catch (JSONException e) {
-                InitPlayerInfo();
-                return;
-            }
-        }
-
-        FileInputStream stream = null;
-        try {
-            stream = openFileInput("Save.json");
-        } catch (FileNotFoundException e) {
-            InitPlayerInfo();
-            return;
-        }
-        InputStreamReader inputStreamReader = new InputStreamReader(stream);
-        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-        StringBuilder sb = new StringBuilder();
-        String line;
-        try {
-            while ((line = bufferedReader.readLine()) != null) {
-                sb.append(line);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            gameInfo = new JSONObject(sb.toString());
-        } catch (JSONException e) {
-            InitPlayerInfo();
-        }
-
-
-    }
     // String s = String.format("{\n        \"name\":\"Player%%%%d\",\n        \"color\":\"%%%%s\",\n        \"room_type\":\"Wood\",\n        \"fields\":[\n        0,\n        -1\n        ],\n        \"pastures\":[\n        0,\n        -1\n        ],\n        \"grain\":[\n        0,\n        -1\n        ],\n        \"vegetables\":[\n        0,\n        -1\n        ],\n        \"sheep\":[\n        0,\n        -1\n        ],\n        \"boar\":[\n        0,\n        -1\n        ],\n        \"cattle\":[\n        0,\n        -1\n        ],\n        \"unused_space\":[\n        0,\n        0\n        ],\n        \"fenced_stables\":[\n        0,\n        0\n        ],\n        \"rooms\":[\n        5,\n        0\n        ],\n        \"family_members\":[\n        2,\n        6\n        ],\n        \"victory_points\":0,\n        \"bonus_points\":0,\n        \"total_score\":-1\n        }")
 
     private void InitPlayerInfo() {
-        String color[] = new String[] {"red", "blue", "yellow", "purple", "white"};
-        gameInfo = new JSONObject();
-        JSONArray players = new JSONArray();
-        for (int i = 0; i < 5; i++) {
-            players.put(CreatePlayerJsonObject(i, color[i]));
-        }
-        try {
-            gameInfo.put("PlayerNumber", players.length());
-            gameInfo.put("Player", players);
-        } catch (JSONException e1) {
-            e1.printStackTrace();
-        }
     }
     private JSONObject CreatePlayerJsonObject(int i, String s) {
         String strInitInfo = String.format(getString(R.string.home_static_jsonstring), i, s);
@@ -183,6 +138,33 @@ public class HomeActivity extends Activity {
         getMenuInflater().inflate(R.menu.home, menu);
         return true;
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == OPEN_CACULATE_SCORE) {
+
+            if(resultCode == RESULT_OK){
+                JSONObject result = null;
+                int nPlayerIndex = data.getIntExtra("index", 0);
+                try {
+                    result = new JSONObject(data.getStringExtra("result"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                if (result != null) {
+                    gameInfoData.UpdatePlayerInfo(nPlayerIndex, result);
+                    gameInfoData.Save(this);
+                    SetListViewByPlayerNumber(gameInfoData.getPlayerNumber());
+                }
+
+            }
+            if (resultCode == RESULT_CANCELED) {
+
+            }
+        }
+    }//onActivityResult
 
     private void ShowMessageBox(String choose) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -218,11 +200,9 @@ public class HomeActivity extends Activity {
     }
 
     private void SetListViewByPlayerNumber(int i) {
-        ListView lv = (ListView)findViewById(R.id.listView);
-        ArrayList<PlayerItem> myList = new ArrayList<PlayerItem>();
-        myList.add(new PlayerItem("Player 1", 10));
-        myList.add(new PlayerItem("Player 2", 20));
-        myList.add(new PlayerItem("Player 3", 30));
+        ListView lv = (ListView)findViewById(R.id.home_lv_players);
+
+        ArrayList<PlayerItem> myList = gameInfoData.getPlayerItemList();
         lv.setAdapter(new PlayerItemAdapter(this, R.layout.listviewitem_playerinfo, myList));
         int height = getItemHeightofListView(lv, myList.size());
         ViewGroup.LayoutParams lp = lv.getLayoutParams();
@@ -230,3 +210,6 @@ public class HomeActivity extends Activity {
         lv.setLayoutParams(lp);
     }
 }
+
+//"\"name\":\"Player%1$d\",\n        \"color\":\"%2$s\",\n        \"room_type\":\"Wood\",\n        \"fields\":[\n        0,\n        -1\n        ],\n        \"pastures\":[\n        0,\n        -1\n        ],\n        \"grain\":[\n        0,\n        -1\n        ],\n        \"vegetables\":[\n        0,\n        -1\n        ],\n        \"sheep\":[\n        0,\n        -1\n        ],\n        \"boar\":[\n        0,\n        -1\n        ],\n        \"cattle\":[\n        0,\n        -1\n        ],\n        \"unused_space\":[\n        0,\n        0\n        ],\n        \"fenced_stables\":[\n        0,\n        0\n        ],\n        \"rooms\":[\n        5,\n        0\n        ],\n        \"family_members\":[\n        2,\n        6\n        ],\n        \"victory_points\":0,\n        \"bonus_points\":0,\n        \"total_score\":-1"
+

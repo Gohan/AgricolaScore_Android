@@ -10,6 +10,9 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,12 +24,17 @@ public class PlayerItemAdapter extends ArrayAdapter<PlayerItem>{
     private ArrayList<PlayerItem> objects;
     private Context context;
     private int layoutResourceId;
+    private JSONObject gameInfo;
 
     public PlayerItemAdapter(Context context, int layoutResourceId, ArrayList<PlayerItem> objects) {
         super(context, layoutResourceId, objects);
         this.layoutResourceId = layoutResourceId;
         this.context = context;
         this.objects = objects;
+    }
+
+    public void AttachGameInfo(JSONObject gameInfo) {
+        this.gameInfo = gameInfo;
     }
 
     @Override
@@ -52,8 +60,8 @@ public class PlayerItemAdapter extends ArrayAdapter<PlayerItem>{
 
         PlayerItem item = this.objects.get(position);
         holder.txtName.setText(item.getName());
+        holder.txtName.setTextColor(item.getColorCode());
         holder.txtScore.setText(Integer.toString(item.getScore()));
-
         return row;
     }
 

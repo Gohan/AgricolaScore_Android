@@ -1,0 +1,309 @@
+{
+    "controls": [
+        {
+            "type": "radio",
+            "name": "颜色",
+            "key": "color",
+            "options": [
+                {
+                    "name": "红",
+                    "key": "red",
+                    "score": 0
+                },
+                {
+                    "name": "蓝",
+                    "key": "blue",
+                    "score": 0
+                },
+                {
+                    "name": "黄",
+                    "key": "yellow",
+                    "score": 0
+                },
+                {
+                    "name": "白",
+                    "key": "white",
+                    "score": 0
+                },
+                {
+                    "name": "紫",
+                    "key": "purple",
+                    "score": 0
+                }
+            ]
+        },
+        {
+            "type": "radio",
+            "name": "农田",
+            "key": "fields",
+            "options": [
+                {
+                    "name": "0-1",
+                    "score": -1
+                },
+                {
+                    "name": "2",
+                    "score": 1
+                },
+                {
+                    "name": "3",
+                    "score": 2
+                },
+                {
+                    "name": "4",
+                    "score": 3
+                },
+                {
+                    "name": "5+",
+                    "score": 4
+                }
+            ]
+        },
+        {
+            "type": "radio",
+            "name": "圈地",
+            "key": "pastures",
+            "options": [
+                {
+                    "name": "0",
+                    "score": -1
+                },
+                {
+                    "name": "1",
+                    "score": 1
+                },
+                {
+                    "name": "2",
+                    "score": 2
+                },
+                {
+                    "name": "3",
+                    "score": 3
+                },
+                {
+                    "name": "4+",
+                    "score": 4
+                }
+            ]
+        },
+        {
+            "type": "radio",
+            "name": "麦子",
+            "key": "grain",
+            "options": [
+                {
+                    "name": "0",
+                    "score": -1
+                },
+                {
+                    "name": "1-3",
+                    "score": 1
+                },
+                {
+                    "name": "4-5",
+                    "score": 2
+                },
+                {
+                    "name": "6-7",
+                    "score": 3
+                },
+                {
+                    "name": "8+",
+                    "score": 4
+                }
+            ]
+        },
+        {
+            "type": "radio",
+            "name": "蔬菜",
+            "key": "vegetables",
+            "options": [
+                {
+                    "name": "0",
+                    "score": -1
+                },
+                {
+                    "name": "1",
+                    "score": 1
+                },
+                {
+                    "name": "2",
+                    "score": 2
+                },
+                {
+                    "name": "3",
+                    "score": 3
+                },
+                {
+                    "name": "4+",
+                    "score": 4
+                }
+            ]
+        },
+        {
+            "type": "radio",
+            "name": "羊",
+            "key": "sheep",
+            "options": [
+                {
+                    "name": "0",
+                    "score": -1
+                },
+                {
+                    "name": "1-3",
+                    "score": 1
+                },
+                {
+                    "name": "4-5",
+                    "score": 2
+                },
+                {
+                    "name": "6-7",
+                    "score": 3
+                },
+                {
+                    "name": "8+",
+                    "score": 4
+                }
+            ]
+        },
+        {
+            "type": "radio",
+            "name": "野猪",
+            "key": "boar",
+            "options": [
+                {
+                    "name": "0",
+                    "score": -1
+                },
+                {
+                    "name": "1-2",
+                    "score": 1
+                },
+                {
+                    "name": "3-4",
+                    "score": 2
+                },
+                {
+                    "name": "5-6",
+                    "score": 3
+                },
+                {
+                    "name": "7+",
+                    "score": 4
+                }
+            ]
+        },
+        {
+            "type": "radio",
+            "name": "牛",
+            "key": "cattle",
+            "options": [
+                {
+                    "name": "0",
+                    "score": -1
+                },
+                {
+                    "name": "1",
+                    "score": 1
+                },
+                {
+                    "name": "2-3",
+                    "score": 2
+                },
+                {
+                    "name": "4-5",
+                    "score": 3
+                },
+                {
+                    "name": "6+",
+                    "score": 4
+                }
+            ]
+        },
+        {
+            "type": "radio",
+            "name": "栅栏内马厩",
+            "key": "fenced_stables",
+            "options": [
+                {
+                    "name": "0",
+                    "score": 0
+                },
+                {
+                    "name": "1",
+                    "score": 1
+                },
+                {
+                    "name": "2",
+                    "score": 2
+                },
+                {
+                    "name": "3",
+                    "score": 3
+                },
+                {
+                    "name": "4",
+                    "score": 4
+                }
+            ]
+        },
+        {
+            "type": "radio",
+            "name": "房屋类型",
+            "key": "room_type",
+            "options": [
+                {
+                    "name": "木屋",
+                    "key": "wood",
+                    "score": 0
+                },
+                {
+                    "name": "砖屋",
+                    "key": "clay",
+                    "score": 1
+                },
+                {
+                    "name": "石屋",
+                    "key": "stone",
+                    "score": 2
+                }
+            ]
+        },
+        {
+            "type": "number",
+            "name": "房屋数量",
+            "key": "rooms",
+            "value": 2,
+            "factor": "room_type"
+        },
+        {
+            "type": "number",
+            "name": "未使用空地",
+            "key": "unused_space",
+            "value": 2,
+            "factor": -1
+        },
+        {
+            "type": "number",
+            "name": "发展卡点数",
+            "key": "victory_points",
+            "value": 2,
+            "factor": -1
+        },
+        {
+            "type": "number",
+            "name": "红利分",
+            "key": "bonus_points",
+            "value": 2,
+            "factor": -1
+        },
+        {
+            "type": "number",
+            "name": "乞讨卡个数",
+            "key": "begging_cards",
+            "value": 0,
+            "factor": -3
+        }
+    ]
+}

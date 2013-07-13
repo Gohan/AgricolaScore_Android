@@ -7,7 +7,9 @@ buildscript {
     }
 }
 apply plugin: 'android'
-
+repositories {
+    mavenCentral()
+}
 dependencies {
     compile files('libs/android-support-v4.jar')
 }
@@ -21,3 +23,8 @@ android {
         targetSdkVersion 16
     }
 }
+
+tasks.withType(Compile) {
+    options.encoding = 'UTF-8'
+}
+
