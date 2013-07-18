@@ -1,12 +1,16 @@
 buildscript {
     repositories {
         mavenCentral()
+        mavenRepo name: 'clojars', urls: 'http://clojars.org/repo'
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:0.4'
+        classpath 'clojuresque:clojuresque:1.5.8'
     }
 }
+
 apply plugin: 'android'
+// apply plugin: 'clojure'
 repositories {
     mavenCentral()
 }

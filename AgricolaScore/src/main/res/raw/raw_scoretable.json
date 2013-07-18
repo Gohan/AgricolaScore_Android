@@ -8,26 +8,31 @@
                 {
                     "name": "红",
                     "key": "red",
+                    "color": "red",
                     "score": 0
                 },
                 {
                     "name": "蓝",
                     "key": "blue",
+                    "color": "blue",
                     "score": 0
                 },
                 {
                     "name": "黄",
                     "key": "yellow",
+                    "color": "yellow",
                     "score": 0
                 },
                 {
                     "name": "白",
                     "key": "white",
+                    "color": "white",
                     "score": 0
                 },
                 {
                     "name": "紫",
                     "key": "purple",
+                    "color": "purple",
                     "score": 0
                 }
             ]

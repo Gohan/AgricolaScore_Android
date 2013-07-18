@@ -23,16 +23,12 @@ import apps.baozishan.agricola_score.Utils.ScoreItem;
 import apps.baozishan.agricola_score.Utils.ScoreNumberItem;
 import apps.baozishan.agricola_score.Utils.ScoreRadioItem;
 
-
-/**
- * Created by gohan on 7/12/13.
- */
 public class CaculateScoreActivity extends Activity {
 
     private final static int ID_START = 100;
     private JSONObject oPlayerInfo = null;
-    private int nIndex = 0;
     private int nId= 100;
+    private int nIndex = 0; // Player Index
     private ArrayList<ScoreItem> arrScoreItem = new ArrayList<ScoreItem>();
 
     public void onCreate(Bundle savedInstanceState) {
@@ -121,7 +117,7 @@ public class CaculateScoreActivity extends Activity {
         String name = jsonObject.optString("name");
         String key = jsonObject.optString("key");
         int value = 0;
-        Object valueOjbect = oPlayerInfo.optString(key);
+        Object valueOjbect = oPlayerInfo.opt(key);
         if (valueOjbect instanceof Integer) {
             value = (Integer)valueOjbect;
         } else if (valueOjbect instanceof JSONArray) {
@@ -150,36 +146,6 @@ public class CaculateScoreActivity extends Activity {
         return edit;
     }
 
-    private RadioGroup AppendRadioGroupArea(RelativeLayout layout, String title, ArrayList<ScoreRadioItem> list, View afterView) {
-        LayoutParams lp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-        if (afterView != null)
-            lp.addRule(RelativeLayout.BELOW, afterView.getId());
-        TextView tv = new TextView(this);
-        tv.setId(nId++);
-        tv.setText(title);
-        tv.setLayoutParams(lp);
-        layout.addView(tv);
-
-        lp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-        lp.addRule(RelativeLayout.BELOW, tv.getId());
-        lp.addRule(RadioGroup.HORIZONTAL);
-        RadioGroup rg = new RadioGroup(this);
-        rg.setId(nId++);
-        rg.setLayoutParams(lp);
-        layout.addView(rg);
-
-//        for (ScoreRadioItem i: list) {
-//            RadioButton item = new RadioButton(this);
-//            item.setText(i.getName());
-//            item.setTextColor(i.getColor());
-//            item.setTag(new Integer(i.getScore()));
-//            rg.addView(item);
-//        }
-
-        return rg;
-    }
-
-
     private RadioGroup AppendRadioGroupArea(RelativeLayout layout, JSONObject jsonObject, View afterView) {
         LayoutParams lp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
         if (afterView != null)
@@ -206,7 +172,7 @@ public class CaculateScoreActivity extends Activity {
 
             item.setText(jsonItem.optString("name"));
             item.setTextColor(JsonHelper.GetColorFromString(jsonItem.optString("color", "black")));
-            item.setTag(new Integer(jsonItem.optInt("score", 0)));
+            item.setTag(Integer.valueOf(jsonItem.optInt("score", 0)));
             rg.addView(item);
 
             // 处理各种score结构中数组情况例如牛[1(个数),1(分数)]
