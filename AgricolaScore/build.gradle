@@ -4,7 +4,7 @@ buildscript {
         mavenRepo name: 'clojars', urls: 'http://clojars.org/repo'
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.4'
+        classpath 'com.android.tools.build:gradle:0.5.+'
         classpath 'clojuresque:clojuresque:1.5.8'
     }
 }
@@ -15,7 +15,7 @@ repositories {
     mavenCentral()
 }
 dependencies {
-    compile files('libs/android-support-v4.jar')
+    compile 'com.android.support:support-v4:13.0.+'
 }
 
 android {
