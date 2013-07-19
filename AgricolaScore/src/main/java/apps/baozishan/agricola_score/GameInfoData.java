@@ -1,6 +1,8 @@
 package apps.baozishan.agricola_score;
 
 import android.content.Context;
+import android.widget.EditText;
+import android.widget.RadioGroup;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -14,7 +16,10 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.ArrayList;
 
+import apps.baozishan.agricola_score.Utils.JsonHelper;
 import apps.baozishan.agricola_score.Utils.PlayerItem;
+import apps.baozishan.agricola_score.Utils.ScoreNumberItem;
+import apps.baozishan.agricola_score.Utils.ScoreRadioItem;
 
 /**
  * Created by gohan on 7/12/13.
@@ -170,7 +175,7 @@ public class GameInfoData {
         return str;
     }
 
-    private String getPlayerName(int i) {
+    public String getPlayerName(int i) {
         String str = "";
         try {
             str = gameInfoData.getJSONArray("Player").getJSONObject(i).getString("name");
@@ -196,5 +201,33 @@ public class GameInfoData {
             e.printStackTrace();
         }
         return ret;
+    }
+
+    public String getPlayerInfoHumanReadString(Context context, int index) {
+        StringBuilder sb = new StringBuilder();
+        try {
+            JSONObject playerInfo = gameInfoData.getJSONArray("Player").getJSONObject(index);
+
+            JSONObject jsonItem = JsonHelper.GetJSONObjectFromStream(
+                    context.getResources().openRawResource(R.raw.raw_scoretable));
+
+            sb.append(String.format("总分: %d\n", playerInfo.optInt("total_score")));
+            JSONArray array = jsonItem.optJSONArray("controls");
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject row = array.optJSONObject(i);
+                String key = row.optString("key");
+                String name = row.optString("name");
+                Object obj = playerInfo.opt(key);
+                if (obj instanceof JSONArray) {
+                    JSONArray value = (JSONArray)obj;
+                    sb.append(String.format("%s: %s, %d\n", name, value.optString(0), value.optInt(1)));
+                } else if (obj instanceof String) {
+                    sb.append(String.format("%s: %s\n", name, (String)obj));
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return sb.toString();
     }
 }

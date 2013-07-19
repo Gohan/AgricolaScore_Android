@@ -71,12 +71,19 @@ public class HomeActivity extends Activity {
 
         Button btnShare = (Button)findViewById(R.id.home_btn_share);
         btnShare.setOnClickListener(new View.OnClickListener() {
+            private Context context;
+
+            public View.OnClickListener init(Context context) {
+                this.context = context;
+                return this;
+            }
+
             @Override
             public void onClick(View view) {
                 StringBuilder sb = new StringBuilder();
                 for (int i = 0; i < gameInfoData.getPlayerNumber(); i++) {
-                    sb.append(String.format("Player %d\n", i+1));
-                    sb.append(gameInfoData.getPlayerInfoJsonString(i));
+                    sb.append(String.format("玩家 %s\n", gameInfoData.getPlayerName(i)));
+                    sb.append(gameInfoData.getPlayerInfoHumanReadString(context, i));
                 }
                 Intent text = new Intent();
                 text.setAction(Intent.ACTION_SEND);
@@ -85,7 +92,7 @@ public class HomeActivity extends Activity {
                 text.setType("text/plain");
                 startActivity(Intent.createChooser(text, "text share"));
             }
-        });
+        }.init(this));
 
         Dictionary<Integer, Integer> mapRadio = new Hashtable<Integer, Integer>();
         mapRadio.put(1, R.id.home_radioButton1);

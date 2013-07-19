@@ -23,6 +23,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".CaculateScoreActivity"/>
+        <activity android:name=".ScoreboardActivity"/>
 
     </application>
 
