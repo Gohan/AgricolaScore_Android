@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.View.MeasureSpec;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RadioButton;
@@ -38,7 +39,6 @@ public class HomeActivity extends Activity {
                 if(item != null) {
                     item.performClick();
                     String strPlayerNumber = ((RadioButton) findViewById(i)).getText().toString();
-                    ShowMessageBox(strPlayerNumber);
                     int nPlayerNumber = Integer.parseInt(strPlayerNumber);
                     gameInfoData.UpdatePlayerNumber(nPlayerNumber);
                     SetListViewByPlayerNumber(Integer.parseInt(strPlayerNumber));
@@ -69,14 +69,31 @@ public class HomeActivity extends Activity {
             }
         }.init(lv, this));
 
+        Button btnShare = (Button)findViewById(R.id.home_btn_share);
+        btnShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < gameInfoData.getPlayerNumber(); i++) {
+                    sb.append(String.format("Player %d\n", i+1));
+                    sb.append(gameInfoData.getPlayerInfoJsonString(i));
+                }
+                Intent text = new Intent();
+                text.setAction(Intent.ACTION_SEND);
+                text.putExtra(Intent.EXTRA_TEXT, sb.toString());
+                text.putExtra(Intent.EXTRA_TITLE, "农场主分数");
+                text.setType("text/plain");
+                startActivity(Intent.createChooser(text, "text share"));
+            }
+        });
+
         Dictionary<Integer, Integer> mapRadio = new Hashtable<Integer, Integer>();
         mapRadio.put(1, R.id.home_radioButton1);
         mapRadio.put(2, R.id.home_radioButton2);
         mapRadio.put(3, R.id.home_radioButton3);
         mapRadio.put(4, R.id.home_radioButton4);
         mapRadio.put(5, R.id.home_radioButton5);
-        int number = 0;
-        number = gameInfoData.getPlayerNumber();
+        int number = gameInfoData.getPlayerNumber();
         RadioButton rb = (RadioButton) findViewById(mapRadio.get(number));
         if (rb != null) {
             rb.setChecked(true);
@@ -87,8 +104,8 @@ public class HomeActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         gameInfoData.AttachContext(this);
-        gameInfoData.RebuildGameInfo();
-        gameInfoData.Save(this);
+        // gameInfoData.RebuildGameInfo();
+        // gameInfoData.Save(this);
         gameInfoData.Load();
         setContentView(R.layout.activity_home);
         InitUIComponents();
@@ -116,21 +133,6 @@ public class HomeActivity extends Activity {
     }
 
     // String s = String.format("{\n        \"name\":\"Player%%%%d\",\n        \"color\":\"%%%%s\",\n        \"room_type\":\"Wood\",\n        \"fields\":[\n        0,\n        -1\n        ],\n        \"pastures\":[\n        0,\n        -1\n        ],\n        \"grain\":[\n        0,\n        -1\n        ],\n        \"vegetables\":[\n        0,\n        -1\n        ],\n        \"sheep\":[\n        0,\n        -1\n        ],\n        \"boar\":[\n        0,\n        -1\n        ],\n        \"cattle\":[\n        0,\n        -1\n        ],\n        \"unused_space\":[\n        0,\n        0\n        ],\n        \"fenced_stables\":[\n        0,\n        0\n        ],\n        \"rooms\":[\n        5,\n        0\n        ],\n        \"family_members\":[\n        2,\n        6\n        ],\n        \"victory_points\":0,\n        \"bonus_points\":0,\n        \"total_score\":-1\n        }")
-
-    private void InitPlayerInfo() {
-    }
-    private JSONObject CreatePlayerJsonObject(int i, String s) {
-        String strInitInfo = String.format(getString(R.string.home_static_jsonstring), i, s);
-        JSONObject ret = null;
-        try {
-            ret = new JSONObject(strInitInfo);
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return new JSONObject();
-        }
-        return ret;
-    }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -192,7 +194,11 @@ public class HomeActivity extends Activity {
         for (int i = 0; i < items; i++) {
 
             View childView = mAdapter.getView(i, null, listView);
-            childView.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+            if (childView != null) {
+                childView.measure(
+                        MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
+                        MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+            }
             listviewElementsHeight+= childView.getMeasuredHeight();
         }
 

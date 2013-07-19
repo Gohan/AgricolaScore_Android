@@ -21,8 +21,9 @@ public final class R {
         public static final int ic_launcher=0x7f020000;
     }
     public static final class id {
-        public static final int action_settings=0x7f09000d;
+        public static final int action_settings=0x7f09000e;
         public static final int caculatescore_relativelayout=0x7f090000;
+        public static final int home_btn_share=0x7f09000b;
         public static final int home_lv_players=0x7f09000a;
         public static final int home_radioButton1=0x7f090004;
         public static final int home_radioButton2=0x7f090005;
@@ -33,8 +34,8 @@ public final class R {
         public static final int home_tv_player=0x7f090009;
         public static final int home_tv_playernumber=0x7f090002;
         public static final int home_tv_usage=0x7f090001;
-        public static final int playername=0x7f09000b;
-        public static final int playerscore=0x7f09000c;
+        public static final int playername=0x7f09000c;
+        public static final int playerscore=0x7f09000d;
     }
     public static final class layout {
         public static final int activity_caculatescore=0x7f030000;

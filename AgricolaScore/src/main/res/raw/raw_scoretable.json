@@ -35,7 +35,8 @@
                     "color": "purple",
                     "score": 0
                 }
-            ]
+            ],
+            "factor":0
         },
         {
             "type": "radio",
@@ -255,6 +256,30 @@
         },
         {
             "type": "radio",
+            "name": "家庭成员个数",
+            "key": "family_members",
+            "options": [
+                {
+                    "name": "2",
+                    "score": 2
+                },
+                {
+                    "name": "3",
+                    "score": 3
+                },
+                {
+                    "name": "4",
+                    "score": 4
+                },
+                {
+                    "name": "5",
+                    "score": 5
+                }
+            ],
+            "factor":3
+        },
+        {
+            "type": "radio",
             "name": "房屋类型",
             "key": "room_type",
             "options": [
@@ -273,7 +298,8 @@
                     "key": "stone",
                     "score": 2
                 }
-            ]
+            ],
+            "factor":0
         },
         {
             "type": "number",
@@ -294,14 +320,14 @@
             "name": "发展卡点数",
             "key": "victory_points",
             "value": 2,
-            "factor": -1
+            "factor": 1
         },
         {
             "type": "number",
             "name": "红利分",
             "key": "bonus_points",
             "value": 2,
-            "factor": -1
+            "factor": 1
         },
         {
             "type": "number",

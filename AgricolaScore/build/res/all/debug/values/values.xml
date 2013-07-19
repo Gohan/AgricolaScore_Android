@@ -52,10 +52,10 @@
         5,
         0
         ],
-        "family_members": 2,
-        "victory_points": 0,
-        "bonus_points": 0,
-        "begging_cards": 0,
+        "family_members": [2,6],
+        "victory_points": [0,0],
+        "bonus_points": [0,0],
+        "begging_cards": [0,0],
         "total_score": -1
         }</string>
     <string name="home_tv_playernumber">玩家个数:</string>

@@ -2,20 +2,25 @@ package apps.baozishan.agricola_score.Utils;
 
 import android.widget.EditText;
 
-/**
- * Created by gohan on 7/13/13.
- */
+import org.json.JSONObject;
+
 public class ScoreNumberItem extends ScoreItem{
     private EditText et;
 
-    public ScoreNumberItem(String key, EditText et) {
-        super(key);
+    public ScoreNumberItem(String key, EditText et, JSONObject json) {
+        super(key, json);
+        this.factor = 1;
         this.et = et;
     }
 
     @Override
     public void UpdateItem() {
-        value = Integer.parseInt(et.getText().toString());
+        String text = et.getText().toString();
+        if (text != null)
+            value = Integer.parseInt(text);
+        else
+            value = 0;
+
         score = value * factor;
     }
 
