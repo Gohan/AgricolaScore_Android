@@ -1,19 +1,17 @@
 buildscript {
     repositories {
         mavenCentral()
-        mavenRepo name: 'clojars', urls: 'http://clojars.org/repo'
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:0.5.+'
-        classpath 'clojuresque:clojuresque:1.5.8'
     }
 }
-
 apply plugin: 'android'
-// apply plugin: 'clojure'
+
 repositories {
     mavenCentral()
 }
+
 dependencies {
     compile 'com.android.support:support-v4:13.0.+'
 }
@@ -23,7 +21,7 @@ android {
     buildToolsVersion "17.0.0"
 
     defaultConfig {
-        minSdkVersion 8
+        minSdkVersion 7
         targetSdkVersion 16
     }
 }
@@ -31,4 +29,3 @@ android {
 tasks.withType(Compile) {
     options.encoding = 'UTF-8'
 }
-
