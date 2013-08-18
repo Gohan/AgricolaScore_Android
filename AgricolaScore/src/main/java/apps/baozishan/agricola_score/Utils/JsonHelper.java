@@ -62,6 +62,8 @@ public class JsonHelper {
             return Color.rgb(255, 0, 255);
         if (color.equalsIgnoreCase("red"))
             return Color.RED;
+        if (color.equalsIgnoreCase("green"))
+            return Color.GREEN;
 
         return Color.BLACK;
     }

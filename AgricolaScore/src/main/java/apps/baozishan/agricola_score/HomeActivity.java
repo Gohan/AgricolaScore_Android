@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.MeasureSpec;
@@ -28,6 +29,7 @@ import apps.baozishan.agricola_score.Utils.PlayerItem;
 
 public class HomeActivity extends Activity {
     protected static final int OPEN_CACULATE_SCORE = 0;
+    protected static final int OPEN_SHOW_SCORE_BOARD = 1;
     private GameInfoData gameInfoData = new GameInfoData();
 
     private void InitUIComponents() {
@@ -91,6 +93,36 @@ public class HomeActivity extends Activity {
                 text.putExtra(Intent.EXTRA_TITLE, "农场主分数");
                 text.setType("text/plain");
                 startActivity(Intent.createChooser(text, "text share"));
+            }
+        }.init(this));
+
+        Button btnShowScoreBoard = (Button)findViewById(R.id.home_btn_scoreboard);
+        btnShowScoreBoard.setOnClickListener(new View.OnClickListener() {
+            private Context context;
+
+            public View.OnClickListener init(Context context) {
+                this.context = context;
+                return this;
+            }
+
+            @Override
+            public void onClick(View view) {
+                String text = gameInfoData.getGameInfo().toString();
+                Log.v("Score_share_button", text);
+                Intent intent = new Intent(context, ScoreboardActivity.class);
+                intent.putExtra("game_info", text);
+                startActivityForResult(intent, OPEN_SHOW_SCORE_BOARD);
+//                StringBuilder sb = new StringBuilder();
+//                for (int i = 0; i < gameInfoData.getPlayerNumber(); i++) {
+//                    sb.append(String.format("玩家 %s\n", gameInfoData.getPlayerName(i)));
+//                    sb.append(gameInfoData.getPlayerInfoHumanReadString(context, i));
+//                }
+//                Intent text = new Intent();
+//                text.setAction(Intent.ACTION_SEND);
+//                text.putExtra(Intent.EXTRA_TEXT, sb.toString());
+//                text.putExtra(Intent.EXTRA_TITLE, "农场主分数");
+//                text.setType("text/plain");
+//                startActivity(Intent.createChooser(text, "text share"));
             }
         }.init(this));
 

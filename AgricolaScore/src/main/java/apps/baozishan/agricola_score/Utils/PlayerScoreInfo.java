@@ -46,20 +46,6 @@ public class PlayerScoreInfo {
         }
     }
 
-    public void PutInfo(String key, int value[]) {
-        try {
-            assert value.length == 2;
-            Object obj = json.opt(key);
-            if (obj instanceof JSONArray) {
-                json.put(key, new JSONArray(Arrays.asList(value[0], value[1])));
-            } else {
-                assert false;
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
     public void PutInfo(String key, String value) {
         try {
             Object obj = json.opt(key);

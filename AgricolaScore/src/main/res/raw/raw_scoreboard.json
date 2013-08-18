@@ -1,0 +1,111 @@
+{
+    "draws": [
+        {
+            "type": "string",
+            "name": "玩家",
+            "key": "name"
+        },
+        {
+            "type": "number",
+            "name": "总分",
+            "key": "total_score"
+        },
+        {
+            "type": "row",
+            "name": "农田",
+            "key": "fields"
+        },
+        {
+            "type": "row",
+            "name": "圈地",
+            "key": "pastures"
+        },
+        {
+            "type": "row",
+            "name": "麦子",
+            "key": "grain"
+        },
+        {
+            "type": "row",
+            "name": "蔬菜",
+            "key": "vegetables"
+        },
+        {
+            "type": "row",
+            "name": "羊",
+            "key": "sheep"
+        },
+        {
+            "type": "row",
+            "name": "野猪",
+            "key": "boar"
+        },
+        {
+            "type": "row",
+            "name": "牛",
+            "key": "cattle"
+        },
+        {
+            "type": "row",
+            "name": "栅栏内马厩",
+            "key": "fenced_stables"
+        },
+        {
+            "type": "row",
+            "name": "家庭成员",
+            "key": "family_members"
+        },
+        {
+            "type": "image",
+            "name": "房屋类型",
+            "key": "room_type"
+        },
+        {
+            "type": "row",
+            "name": "房屋分数",
+            "key": "rooms"
+        },
+        {
+            "type": "number",
+            "name": "未使用空地",
+            "key": "unused_space"
+        },
+        {
+            "type": "number",
+            "name": "发展卡分数",
+            "key": "victory_points"
+        },
+        {
+            "type": "number",
+            "name": "红利分数",
+            "key": "bonus_points"
+        },
+        {
+            "type": "number",
+            "name": "乞讨卡分数",
+            "key": "begging_cards"
+        }
+    ],
+    "theme": [
+        {
+            "key": "green",
+            "bkg_color":"0xFFFFFF"
+        },
+        {
+            "key": "white",
+            "bkg_color":"0xFFFFFF"
+        },
+        {
+            "key": "blue",
+            "bkg_color":"0xFFFFFF"
+        },
+        {
+            "key": "red",
+            "bkg_color":"0xFFFFFF"
+        },
+        {
+            "key": "purple",
+            "bkg_color":"0xFFFFFF"
+        }
+    ]
+}

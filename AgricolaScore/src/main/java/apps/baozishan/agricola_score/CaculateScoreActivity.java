@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -94,7 +96,7 @@ public class CaculateScoreActivity extends Activity {
                 arrScoreItem.add(new ScoreRadioItem(key, rg, row));
                 afterView = rg;
             } else if (type.equals("number")) {
-                EditText et = AppendEditTextArea(layout, row, afterView);
+                EditText et = AppendEditNumberArea(layout, row, afterView);
                 arrScoreItem.add(new ScoreNumberItem(key, et, row));
                 afterView = et;
             }
@@ -105,11 +107,16 @@ public class CaculateScoreActivity extends Activity {
             public void onClick(View view) {
                 int totalScore = 0;
                 int nRoomTypeFactor = -1;
+                String strRoomType = "";
                 for (ScoreItem item:arrScoreItem) {
                     String key = item.GetKey();
                     if (key.equalsIgnoreCase("room_type")) {
+                        assert item instanceof ScoreRadioItem;
+                        ScoreRadioItem radio = (ScoreRadioItem)item;
                         item.UpdateItem();
                         nRoomTypeFactor = item.GetValue();
+                        strRoomType = radio.GetChoiceName();
+                        continue;
                     }
 
                     JSONObject obj = item.GetUserData();
@@ -129,6 +136,7 @@ public class CaculateScoreActivity extends Activity {
                     if (item instanceof ScoreRadioItem){
                         String strValue = ((ScoreRadioItem)item).GetStringValue();
                         if (strValue != null) {
+                            // color / room_type 是有StringValue的
                             oPlayerInfoWrapper.PutInfo(key, strValue);
                             continue;
                         }
@@ -138,10 +146,14 @@ public class CaculateScoreActivity extends Activity {
                         totalScore += score;
                         oPlayerInfoWrapper.PutInfo(key, strValue, score);
                     } else {
-                        oPlayerInfoWrapper.PutInfo(key, new int[]{item.GetValue(), item.GetScore()});
+                        String description = String.format("%d", item.GetValue());
+                        oPlayerInfoWrapper.PutInfo(key,
+                                description,
+                                item.GetScore());
                         totalScore += item.GetScore();
                     }
                 }
+
                 oPlayerInfoWrapper.PutInfo("name", txtName.getText().toString());
                 oPlayerInfoWrapper.PutInfo("total_score", totalScore);
                 Intent returnIntent = new Intent();
@@ -149,6 +161,7 @@ public class CaculateScoreActivity extends Activity {
                 returnIntent.putExtra("result",
                         oPlayerInfoWrapper.GetJsonObject().toString());
                 setResult(RESULT_OK, returnIntent);
+                Log.v("CalcScore", oPlayerInfoWrapper.GetJsonObject().toString());
                 finish();
             }
 
@@ -180,12 +193,65 @@ public class CaculateScoreActivity extends Activity {
         lp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
         lp.addRule(RelativeLayout.BELOW, tv.getId());
         EditText edit = new EditText(this);
+        edit.setSingleLine(true);
         edit.setText(value);
         edit.setId(nId++);
         edit.setLayoutParams(lp);
         layout.addView(edit);
 
         return edit;
+    }
+
+    private EditText AppendEditNumberArea(RelativeLayout layout, JSONObject jsonObject, View afterView) {
+        EditText et = AppendEditTextArea(layout, jsonObject, afterView);
+        class LocalListener implements View.OnClickListener {
+            public static final int PLUS = 1;
+            public static final int MINUS = 2;
+            private int m_nEditId = 0;
+            private int m_nType = PLUS;
+
+            public LocalListener(int nEditId, int type) {
+                m_nEditId = nEditId;
+                m_nType = type;
+            }
+
+            @Override
+            public void onClick(View view) {
+                EditText et = (EditText)findViewById(m_nEditId);
+                et.requestFocus();
+                int newValue = Integer.parseInt(et.getText().toString());
+                if (m_nType == PLUS)
+                    newValue += 1;
+                else
+                    newValue -= 1;
+                et.setText(Integer.toString(newValue));
+            }
+        };
+
+        Button minusButton = new Button(this);
+        minusButton.setId(nId++);
+        minusButton.setText("-");
+        minusButton.setOnClickListener(new LocalListener(et.getId(), LocalListener.MINUS));
+
+        Button plusButton = new Button(this);
+        plusButton.setId(nId++);
+        plusButton.setText("+");
+        plusButton.setOnClickListener(new LocalListener(et.getId(), LocalListener.PLUS));
+
+        LayoutParams lp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        if (afterView != null)
+            lp.addRule(RelativeLayout.BELOW, afterView.getId());
+        lp.addRule(RelativeLayout.RIGHT_OF, et.getId());
+        minusButton.setLayoutParams(lp);
+        layout.addView(minusButton);
+
+        lp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        if (afterView != null)
+            lp.addRule(RelativeLayout.BELOW, afterView.getId());
+        lp.addRule(RelativeLayout.RIGHT_OF, minusButton.getId());
+        plusButton.setLayoutParams(lp);
+        layout.addView(plusButton);
+        return et;
     }
 
     private EditText AppendEditTextArea(RelativeLayout layout, JSONObject jsonObject, View afterView) {
@@ -212,7 +278,7 @@ public class CaculateScoreActivity extends Activity {
         lp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
         lp.addRule(RelativeLayout.BELOW, tv.getId());
         EditText edit = new EditText(this);
-        edit.setInputType(InputType.TYPE_CLASS_NUMBER);
+        edit.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
         edit.setText(Integer.toString(value));
         edit.setId(nId++);
         edit.setLayoutParams(lp);
@@ -275,16 +341,6 @@ public class CaculateScoreActivity extends Activity {
                     item.setChecked(false);
                 }
                 continue;
-            } catch (JSONException e) {}
-
-            // 处理其他数据, 只保存分数那种
-            try {
-                int playerIntValue = oPlayerInfo.getInt(key);
-                if (playerIntValue == jsonItem.optInt("score", 0)*nFactor) {
-                    item.setChecked(true);
-                } else {
-                    item.setChecked(false);
-                }
             } catch (JSONException e) {}
         }
 

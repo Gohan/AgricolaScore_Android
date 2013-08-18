@@ -1,8 +1,6 @@
 package apps.baozishan.agricola_score;
 
 import android.content.Context;
-import android.widget.EditText;
-import android.widget.RadioGroup;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,11 +13,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 
 import apps.baozishan.agricola_score.Utils.JsonHelper;
 import apps.baozishan.agricola_score.Utils.PlayerItem;
-import apps.baozishan.agricola_score.Utils.ScoreNumberItem;
-import apps.baozishan.agricola_score.Utils.ScoreRadioItem;
 
 /**
  * Created by gohan on 7/12/13.
@@ -229,5 +227,38 @@ public class GameInfoData {
             e.printStackTrace();
         }
         return sb.toString();
+    }
+
+    public HashMap<String, ArrayList<String>> getPlayerScoreInfoMap(int index) {
+        HashMap<String, ArrayList<String>> result = new HashMap<String, ArrayList<String>>();
+        try {
+            JSONObject playerInfo = gameInfoData.getJSONArray("Player").getJSONObject(index);
+
+            JSONObject jsonItem = JsonHelper.GetJSONObjectFromStream(
+                    context.getResources().openRawResource(R.raw.raw_scoretable));
+
+            result.put("total_score",
+                    new ArrayList<String>(Arrays.asList(playerInfo.optString("total_score"))));
+
+            JSONArray array = jsonItem.optJSONArray("controls");
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject row = array.optJSONObject(i);
+                String key = row.optString("key");
+                String name = row.optString("name");
+                Object obj = playerInfo.opt(key);
+                if (obj instanceof JSONArray) {
+                    JSONArray value = (JSONArray)obj;
+                    result.put(key,
+                            new ArrayList<String>(Arrays.asList(value.optString(0), value.optString(1))));
+                } else if (obj instanceof String) {
+                    result.put(key,
+                            new ArrayList<String>(Arrays.asList((String)obj)));
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return result;
     }
 }
