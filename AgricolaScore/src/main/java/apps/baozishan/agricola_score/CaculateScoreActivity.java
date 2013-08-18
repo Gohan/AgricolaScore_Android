@@ -116,6 +116,7 @@ public class CaculateScoreActivity extends Activity {
                         item.UpdateItem();
                         nRoomTypeFactor = item.GetValue();
                         strRoomType = radio.GetChoiceName();
+                        oPlayerInfoWrapper.PutInfo(key, radio.GetStringValue());
                         continue;
                     }
 

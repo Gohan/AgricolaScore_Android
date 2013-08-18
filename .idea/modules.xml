@@ -3,7 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/AgricolaScore/AgricolaScore.iml" filepath="$PROJECT_DIR$/AgricolaScore/AgricolaScore.iml" />
-      <module fileurl="file://$PROJECT_DIR$/AgricolaScoreProject.iml" filepath="$PROJECT_DIR$/AgricolaScoreProject.iml" />
+      <module fileurl="file://$PROJECT_DIR$/AgricolaScore_Android.iml" filepath="$PROJECT_DIR$/AgricolaScore_Android.iml" />
     </modules>
   </component>
 </project>
