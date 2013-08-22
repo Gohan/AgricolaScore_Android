@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.text.format.Time;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -24,7 +25,7 @@ import apps.baozishan.agricola_score.Utils.JsonHelper;
 public class ScoreBoardSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
 
     private static final int FIRST_COLUME_WIDTH = 140;
-    private static final int VALUE_COLUME_WIDTH = 80;
+    private static final int VALUE_COLUME_WIDTH = 100;
     private static final int ROW_HEIGHT = 40;
     private static final int STRING_SIZE = 28;
 
@@ -36,6 +37,51 @@ public class ScoreBoardSurfaceView extends SurfaceView implements SurfaceHolder.
         jsonScoreBoard = JsonHelper.GetJSONObjectFromStream(
                 getResources().openRawResource(R.raw.raw_scoreboard));
         getHolder().addCallback(this);
+    }
+    public void DrawToCanvas(Canvas canvas) {
+        int nRowCount = jsonScoreBoard.optJSONArray("draws").length();
+        int nPlayerCount = jsonGameInfo.optInt("PlayerNumber");
+        JSONArray arrDraws = jsonScoreBoard.optJSONArray("draws");
+        int Height = (nRowCount+2) * ROW_HEIGHT; // 最后一行写一个日期, cppgohan
+        int Width = (FIRST_COLUME_WIDTH) + ((nPlayerCount+1) * VALUE_COLUME_WIDTH);
+
+        float fY = VALUE_COLUME_WIDTH / 2;
+        JSONArray jsonPlayersInfo = jsonGameInfo.optJSONArray("Player");
+        for (int i = 0; i < nRowCount; i++) {
+            float fX = 10;
+            JSONObject jsonRowInfo = arrDraws.optJSONObject(i);
+            SimpleDrawText(canvas,
+                    jsonRowInfo.optString("name"),
+                    STRING_SIZE,
+                    new RectF(fX, fY, fX + FIRST_COLUME_WIDTH, fY + ROW_HEIGHT),
+                    Color.rgb(0, 0, 0), Color.rgb(255, 255, 255), Color.rgb(255, 0, 0));
+
+            String type = jsonRowInfo.optString("type");
+            String key = jsonRowInfo.optString("key");
+            fX += FIRST_COLUME_WIDTH;
+
+            for (int p = 0; p < nPlayerCount; p++) {
+                String value = GetValueFromJsonObjectByType(jsonPlayersInfo.optJSONObject(p), key, type);
+                SimpleDrawText(canvas,
+                        value,
+                        STRING_SIZE,
+                        new RectF(fX, fY, fX + VALUE_COLUME_WIDTH, fY + ROW_HEIGHT),
+                        Color.rgb(0, 0, 0), Color.rgb(255, 255, 255), Color.rgb(255, 0, 0));
+                fX += VALUE_COLUME_WIDTH;
+            }
+
+            //canvas.drawText(arrDraws.optJSONObject(i).optString("name"), fX+FIRST_COLUME_WIDTH/2, fY+ROW_HEIGHT/2, paint);
+            fY += ROW_HEIGHT;
+        }
+        // DrawTextInRect
+        Time now = new Time();
+        now.setToNow();
+        String strTime = String.format("%s       cppgohan@2013", now.format("%Y/%m/%d %H:%M:%S"));
+        DrawTextWithoutRect(canvas,
+                strTime,
+                STRING_SIZE,
+                new RectF(20, fY, Width - 20, fY + ROW_HEIGHT),
+                Color.rgb(0, 0, 255), Paint.Align.LEFT);
     }
 
     public void SetGameInfoObject(JSONObject jsonGameInfo) {
@@ -61,7 +107,7 @@ public class ScoreBoardSurfaceView extends SurfaceView implements SurfaceHolder.
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
         this.surfaceHolder = surfaceHolder;
         setLayoutParams(new RelativeLayout.LayoutParams(800, 800));
-        Draw(null);
+        Draw();
     }
 
     @Override
@@ -75,6 +121,10 @@ public class ScoreBoardSurfaceView extends SurfaceView implements SurfaceHolder.
     }
 
     public void SimpleDrawText(Canvas canvas, String text, int size, RectF rect, int background, int foreground, int border) {
+        DrawTextInRect(canvas, text, size, rect, background, foreground, border, Paint.Align.CENTER);
+    }
+
+    public void DrawTextInRect(Canvas canvas, String text, int size, RectF rect, int background, int foreground, int border, Paint.Align align) {
         Paint paint = new Paint();
 
         paint.setColor(background);
@@ -86,15 +136,43 @@ public class ScoreBoardSurfaceView extends SurfaceView implements SurfaceHolder.
         paint.setStrokeWidth(1);
         canvas.drawRect(rect, paint);
 
-
         paint.setColor(foreground);
         paint.setStyle(Paint.Style.FILL);
         paint.setTextSize(size);
-        paint.setTextAlign(Paint.Align.CENTER);
+        paint.setTextAlign(align);
 
         Rect bounds = new Rect();
         paint.getTextBounds(text, 0, text.length(), bounds);
         canvas.drawText(text, rect.centerX(), rect.centerY()+bounds.height()/2, paint);
+    }
+
+    public void DrawTextWithoutRect(Canvas canvas, String text, int size, RectF rect, int foreground, Paint.Align align) {
+        Paint paint = new Paint();
+
+        paint.setColor(foreground);
+        paint.setStyle(Paint.Style.FILL);
+        paint.setTextSize(size);
+        paint.setTextAlign(align);
+
+        Rect bounds = new Rect();
+        paint.getTextBounds(text, 0, text.length(), bounds);
+        float fX = 0, fY = 0;
+        switch (align) {
+            case LEFT:
+                fX = rect.left;
+                fY = rect.centerY()+bounds.height()/2;
+                break;
+            case CENTER:
+                fX = rect.centerX();
+                fY = rect.centerY()+bounds.height()/2;
+                break;
+            case RIGHT:
+                fX = rect.width() - bounds.width();
+                fY = rect.centerY()+bounds.height()/2;
+                break;
+        }
+
+        canvas.drawText(text, fX, fY, paint);
     }
 
     private String GetValueFromJsonObjectByType(JSONObject obj, String key, String type) {
@@ -115,49 +193,14 @@ public class ScoreBoardSurfaceView extends SurfaceView implements SurfaceHolder.
         return text;
     }
 
-    public void Draw(JSONObject jsonScore) {
+    public void Draw() {
         setLayoutParams(new RelativeLayout.LayoutParams(800, 800));
         Canvas canvas = getHolder().lockCanvas();
         if (canvas == null)
         {
             return;
         }
-
-        int nRowCount = jsonScoreBoard.optJSONArray("draws").length();
-        int nPlayerCount = jsonGameInfo.optInt("PlayerNumber");
-        JSONArray arrDraws = jsonScoreBoard.optJSONArray("draws");
-        int Height = (nRowCount+1) * ROW_HEIGHT;
-        int Width = (FIRST_COLUME_WIDTH) + ((nPlayerCount+1) * VALUE_COLUME_WIDTH);
-
-        float fY = VALUE_COLUME_WIDTH / 2;
-        JSONArray jsonPlayersInfo = jsonGameInfo.optJSONArray("Player");
-        for (int i = 0; i < nRowCount; i++) {
-            float fX = ROW_HEIGHT / 2;
-            JSONObject jsonRowInfo = arrDraws.optJSONObject(i);
-            SimpleDrawText(canvas,
-                    jsonRowInfo.optString("name"),
-                    STRING_SIZE,
-                    new RectF(fX, fY, fX + FIRST_COLUME_WIDTH, fY + ROW_HEIGHT),
-                    Color.rgb(0, 0, 0), Color.rgb(255, 255, 255), Color.rgb(255, 0, 0));
-
-            String type = jsonRowInfo.optString("type");
-            String key = jsonRowInfo.optString("key");
-            fX += FIRST_COLUME_WIDTH;
-
-            for (int p = 0; p < nPlayerCount; p++) {
-                String value = GetValueFromJsonObjectByType(jsonPlayersInfo.optJSONObject(p), key, type);
-                SimpleDrawText(canvas,
-                        value,
-                        STRING_SIZE,
-                        new RectF(fX, fY, fX + VALUE_COLUME_WIDTH, fY + ROW_HEIGHT),
-                        Color.rgb(0, 0, 0), Color.rgb(255, 255, 255), Color.rgb(255, 0, 0));
-                fX += VALUE_COLUME_WIDTH;
-            }
-
-            //canvas.drawText(arrDraws.optJSONObject(i).optString("name"), fX+FIRST_COLUME_WIDTH/2, fY+ROW_HEIGHT/2, paint);
-            fY += ROW_HEIGHT;
-        }
-
+        DrawToCanvas(canvas);
         // canvas.drawRect(new Rect(0, 0, 100, 100), paint);
         getHolder().unlockCanvasAndPost(canvas);
         Log.v("SurfaceView", jsonScoreBoard.toString());

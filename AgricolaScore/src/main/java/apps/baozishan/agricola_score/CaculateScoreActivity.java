@@ -239,19 +239,24 @@ public class CaculateScoreActivity extends Activity {
         plusButton.setText("+");
         plusButton.setOnClickListener(new LocalListener(et.getId(), LocalListener.PLUS));
 
+        LayoutParams lpEt = (LayoutParams)et.getLayoutParams();
+
         LayoutParams lp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-        if (afterView != null)
-            lp.addRule(RelativeLayout.BELOW, afterView.getId());
+        lp.addRule(RelativeLayout.BELOW, lpEt.getRules()[RelativeLayout.BELOW]);
         lp.addRule(RelativeLayout.RIGHT_OF, et.getId());
+
         minusButton.setLayoutParams(lp);
         layout.addView(minusButton);
 
         lp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-        if (afterView != null)
-            lp.addRule(RelativeLayout.BELOW, afterView.getId());
+        lp.addRule(RelativeLayout.BELOW, lpEt.getRules()[RelativeLayout.BELOW]);
         lp.addRule(RelativeLayout.RIGHT_OF, minusButton.getId());
+
         plusButton.setLayoutParams(lp);
         layout.addView(plusButton);
+
+        lpEt.addRule(RelativeLayout.ALIGN_BOTTOM, plusButton.getId());
+        et.setLayoutParams(lpEt);
         return et;
     }
 

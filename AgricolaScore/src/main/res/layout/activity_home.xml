@@ -84,7 +84,7 @@
     <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="分享分数"
+            android:text="分享文字分数"
             android:id="@+id/home_btn_share"
             android:layout_below="@+id/home_lv_players"
             />
@@ -92,7 +92,7 @@
     <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="显示分数"
+            android:text="显示分数图表"
             android:id="@+id/home_btn_scoreboard"
             android:layout_below="@+id/home_lv_players"
             android:layout_toRightOf="@id/home_btn_share"
